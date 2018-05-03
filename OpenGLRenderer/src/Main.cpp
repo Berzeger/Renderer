@@ -149,14 +149,14 @@ int main(int argc, char ** argv)
 	shader.setInt("texture1", 0);
 	shader.setInt("texture2", 1);
 	shader.setFloat("ratio", 1.0f);
-
-	glm::mat4 trans(1.0f);
-	trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
-	trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
-	shader.setMat4("transform", trans);
 	
 	while (!glfwWindowShouldClose(window))
 	{
+		glm::mat4 trans;
+		//trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
+		trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+		shader.setMat4("transform", trans);
+
 		GlCall(glClear(GL_COLOR_BUFFER_BIT));
 		GlCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
 		// swaps front and back buffers
