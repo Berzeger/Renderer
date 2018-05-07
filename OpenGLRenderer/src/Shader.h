@@ -6,6 +6,7 @@
 #include <GLM/gtc/type_ptr.hpp>
 
 #include <iostream>
+#include <unordered_map>
 
 struct ShaderProgramSource
 {
@@ -17,15 +18,18 @@ class Shader
 {
 private:
 	unsigned int m_Id;
+	std::unordered_map<std::string, GLint>* m_UniformLocations;
 
-	unsigned int CompileShader(unsigned int type, const std::string& source);
-	std::string ParseShader(const std::string& filepath, GLenum type) const;
-	unsigned int CreateShader(const std::string& vertexShader, const std::string& fragmentShader);
+	unsigned int compileShader(unsigned int type, const std::string& source);
+	std::string parseShader(const std::string& filepath, GLenum type) const;
+	unsigned int createShader(const std::string& vertexShader, const std::string& fragmentShader);
+	void cacheUniformLocations() const;
 
 public:
 	unsigned int ProgramId;
 
 	Shader(const std::string &vertexPath, const std::string &fragmentPath);
+	~Shader();
 	void use();
 	void setBool(const std::string &name, bool value) const;
 	void setInt(const std::string &name, int value) const;

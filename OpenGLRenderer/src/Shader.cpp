@@ -5,7 +5,7 @@
 #include <sstream>
 #include <fstream>
 
-unsigned int Shader::CompileShader(unsigned int type, const std::string & source)
+unsigned int Shader::compileShader(unsigned int type, const std::string & source)
 {
 	unsigned int id = glCreateShader(type);
 	const char* src = source.c_str();
@@ -30,7 +30,7 @@ unsigned int Shader::CompileShader(unsigned int type, const std::string & source
 	return id;
 }
 
-std::string Shader::ParseShader(const std::string & filepath, GLenum type) const
+std::string Shader::parseShader(const std::string & filepath, GLenum type) const
 {
 	std::ifstream stream(filepath);
 
@@ -51,11 +51,11 @@ std::string Shader::ParseShader(const std::string & filepath, GLenum type) const
 	return ss.str();
 }
 
-unsigned int Shader::CreateShader(const std::string & vertexShader, const std::string & fragmentShader)
+unsigned int Shader::createShader(const std::string & vertexShader, const std::string & fragmentShader)
 {
 	unsigned int program = glCreateProgram();
-	unsigned int vs = CompileShader(GL_VERTEX_SHADER, vertexShader);
-	unsigned int fs = CompileShader(GL_FRAGMENT_SHADER, fragmentShader);
+	unsigned int vs = compileShader(GL_VERTEX_SHADER, vertexShader);
+	unsigned int fs = compileShader(GL_FRAGMENT_SHADER, fragmentShader);
 
 	GlCall(glAttachShader(program, vs));
 	GlCall(glAttachShader(program, fs));
@@ -70,9 +70,16 @@ unsigned int Shader::CreateShader(const std::string & vertexShader, const std::s
 
 Shader::Shader(const std::string &vertexPath, const std::string &fragmentPath)
 {
-	std::string vertexSource = ParseShader(vertexPath, GL_VERTEX_SHADER);
-	std::string fragmentSource = ParseShader(fragmentPath, GL_FRAGMENT_SHADER);
-	ProgramId = CreateShader(vertexSource, fragmentSource);
+	std::string vertexSource = parseShader(vertexPath, GL_VERTEX_SHADER);
+	std::string fragmentSource = parseShader(fragmentPath, GL_FRAGMENT_SHADER);
+	ProgramId = createShader(vertexSource, fragmentSource);
+	m_UniformLocations = new std::unordered_map<std::string, GLint>();
+	cacheUniformLocations();
+}
+
+Shader::~Shader()
+{
+	delete m_UniformLocations;
 }
 
 void Shader::use()
@@ -80,22 +87,40 @@ void Shader::use()
 	GlCall(glUseProgram(ProgramId));
 }
 
+void Shader::cacheUniformLocations() const
+{
+	GLint maxUniformNameLen, nUniforms;
+	GlCall(glGetProgramiv(ProgramId, GL_ACTIVE_UNIFORM_MAX_LENGTH, &maxUniformNameLen));
+	GlCall(glGetProgramiv(ProgramId, GL_ACTIVE_UNIFORMS, &nUniforms));
+
+	GLint read, size;
+	GLenum type;
+	const GLsizei bufSize = 16; // maximum name length
+	GLchar name[bufSize]; // variable name in GLSL
+
+	for (GLint i = 0; i < nUniforms; ++i)
+	{
+		glGetActiveUniform(ProgramId, i, maxUniformNameLen, &read, &size, &type, name);
+		(*m_UniformLocations)[name] = glGetUniformLocation(ProgramId, name);
+	}
+}
+
 void Shader::setBool(const std::string & name, bool value) const
 {
-	GlCall(glUniform1i(glGetUniformLocation(ProgramId, name.c_str()), (int)value));
+	GlCall(glUniform1i((*m_UniformLocations)[name], (int)value));
 }
 
 void Shader::setInt(const std::string & name, int value) const
 {
-	GlCall(glUniform1i(glGetUniformLocation(ProgramId, name.c_str()), value));
+	GlCall(glUniform1i((*m_UniformLocations)[name], value));
 }
 
 void Shader::setFloat(const std::string & name, float value) const
 {
-	GlCall(glUniform1f(glGetUniformLocation(ProgramId, name.c_str()), value));
+	GlCall(glUniform1f((*m_UniformLocations)[name], value));
 }
 
 void Shader::setMat4(const std::string & name, const glm::mat4& value) const
 {
-	GlCall(glUniformMatrix4fv(glGetUniformLocation(ProgramId, name.c_str()), 1, GL_FALSE, glm::value_ptr(value)));
+	GlCall(glUniformMatrix4fv((*m_UniformLocations)[name], 1, GL_FALSE, glm::value_ptr(value)));
 }
