@@ -18,6 +18,7 @@
 #include "Macros.h"
 #include "Shader.h"
 #include "Texture2D.h"
+#include "Timer.h"
 
 extern "C" {
 	_declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
@@ -89,7 +90,7 @@ int main(int argc, char ** argv)
 	glfwGetFramebufferSize(window, &framebufferWidth, &framebufferHeight);
 	glViewport(0, 0, framebufferHeight, framebufferHeight);
 	glfwMakeContextCurrent(window);
-	glfwSwapInterval(1);
+	glfwSwapInterval(0);
 
 	if (glewInit() != GLEW_OK)
 	{
@@ -149,21 +150,57 @@ int main(int argc, char ** argv)
 	shader.setInt("texture1", 0);
 	shader.setInt("texture2", 1);
 	shader.setFloat("ratio", 1.0f);
-	
+
+	Shader shader2("res/shaders/vertex.glsl", "res/shaders/fragment.glsl");
+	shader2.use();
+	shader2.setInt("texture1", 0);
+	shader2.setInt("texture2", 1);
+	shader2.setFloat("ratio", 1.0f);
+
+	Timer timer;
+	float deltaTime = 0.0f;
+	float second = 0.0f;
+	unsigned int frames = 0;
+
 	while (!glfwWindowShouldClose(window))
 	{
+		timer.start();
+		GlCall(glClear(GL_COLOR_BUFFER_BIT));
+
 		glm::mat4 trans;
-		//trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
+		trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
 		trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
 		shader.setMat4("transform", trans);
+		shader.use();
 
-		GlCall(glClear(GL_COLOR_BUFFER_BIT));
 		GlCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
+
+		float sinus = glm::sin(glfwGetTime());
+		trans = glm::mat4(1.0f);
+		trans = glm::translate(trans, glm::vec3(-0.5f, 0.5f, 0.0f));
+		trans = glm::scale(trans, glm::vec3(sinus, sinus, 1.0f));
+		shader2.setMat4("transform", trans);
+		shader2.use();
+
+		GlCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
+
 		// swaps front and back buffers
 		glfwSwapBuffers(window);
 		shader.setFloat("ratio", mixValue);
 
 		glfwPollEvents();
+		timer.end();
+		deltaTime = timer.getDeltaTime();
+		second += deltaTime;
+		frames++;
+
+		if (second >= 1.0f)
+		{
+			float fps = frames / second;
+			std::cout << fps << " FPS (" << 1000 / fps << " ms per frame)" << "\n";
+			second -= 1.0f;
+			frames = 0;
+		}
 	}
 
 	GlCall(glDeleteProgram(shader.ProgramId));
