@@ -205,7 +205,6 @@ int main(int argc, char ** argv)
 
 	GlCall(glDeleteProgram(shader.ProgramId));
 
-	std::cin.get();
 	glfwTerminate();
 
 	return 0;
