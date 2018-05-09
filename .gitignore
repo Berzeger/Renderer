@@ -341,3 +341,6 @@ OpenCover/
 
 # Azure Stream Analytics local run output 
 ASALocalRun/
+
+# Renderer dependencies
+!Dependencies/**
