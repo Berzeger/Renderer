@@ -79,6 +79,7 @@ Shader::Shader(const std::string &vertexPath, const std::string &fragmentPath)
 
 Shader::~Shader()
 {
+	glDeleteProgram(ProgramId);
 	delete m_UniformLocations;
 }
 
@@ -123,4 +124,14 @@ void Shader::setFloat(const std::string & name, float value) const
 void Shader::setMat4(const std::string & name, const glm::mat4& value) const
 {
 	GlCall(glUniformMatrix4fv((*m_UniformLocations)[name], 1, GL_FALSE, glm::value_ptr(value)));
+}
+
+void Shader::setVec3(const std::string &name, const glm::vec3& value) const
+{
+	GlCall(glUniform3fv((*m_UniformLocations)[name], 1, &value[0]));
+}
+
+void Shader::setVec3(const std::string &name, float x, float y, float z) const
+{
+	GlCall(glUniform3f((*m_UniformLocations)[name], x, y, z));
 }

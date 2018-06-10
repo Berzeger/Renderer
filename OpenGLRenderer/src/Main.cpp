@@ -20,6 +20,8 @@
 #include "Texture2D.h"
 #include "Timer.h"
 #include "Camera.h"
+#include "VertexBuffer.h"
+#include "IndexBuffer.h"
 
 extern "C" {
 	_declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
@@ -39,22 +41,22 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
 	if (firstMouse)
 	{
-		lastX = xpos;
-		lastY = ypos;
+		lastX = (float)xpos;
+		lastY = (float)ypos;
 		firstMouse = false;
 	}
 
-	float xoffset = xpos - lastX;
-	float yoffset = lastY - ypos;
-	lastX = xpos;
-	lastY = ypos;
+	float xoffset = (float)(xpos - lastX);
+	float yoffset = (float)(lastY - ypos);
+	lastX = (float)xpos;
+	lastY = (float)ypos;
 
 	camera.processMouse(xoffset, yoffset);
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-	camera.processMouseScrollWheel(yoffset);
+	camera.processMouseScrollWheel((float)yoffset);
 }
 
 void processInput(GLFWwindow* window, float dt)
@@ -134,103 +136,74 @@ int main(int argc, char ** argv)
 	// set up vertex data (and buffer(s)) and configure vertex attributes
 	// ------------------------------------------------------------------
 	float vertices[] = {
-		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-		0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f,
+		0.5f, -0.5f, -0.5f, 
+		0.5f,  0.5f, -0.5f, 
+		0.5f,  0.5f, -0.5f, 
+		-0.5f,  0.5f, -0.5f,
+		-0.5f, -0.5f, -0.5f,
 
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-		0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-		0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-		0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		-0.5f, -0.5f,  0.5f,
+		0.5f, -0.5f,  0.5f, 
+		0.5f,  0.5f,  0.5f, 
+		0.5f,  0.5f,  0.5f, 
+		-0.5f,  0.5f,  0.5f,
+		-0.5f, -0.5f,  0.5f,
 
-		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,
+		-0.5f,  0.5f, -0.5f,
+		-0.5f, -0.5f, -0.5f,
+		-0.5f, -0.5f, -0.5f,
+		-0.5f, -0.5f,  0.5f,
+		-0.5f,  0.5f,  0.5f,
 
-		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		0.5f,  0.5f,  0.5f, 
+		0.5f,  0.5f, -0.5f, 
+		0.5f, -0.5f, -0.5f, 
+		0.5f, -0.5f, -0.5f, 
+		0.5f, -0.5f,  0.5f, 
+		0.5f,  0.5f,  0.5f, 
 
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-		0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-		0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,
+		0.5f, -0.5f, -0.5f, 
+		0.5f, -0.5f,  0.5f, 
+		0.5f, -0.5f,  0.5f, 
+		-0.5f, -0.5f,  0.5f,
+		-0.5f, -0.5f, -0.5f,
 
-		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-		0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-		0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+		-0.5f,  0.5f, -0.5f,
+		0.5f,  0.5f, -0.5f, 
+		0.5f,  0.5f,  0.5f, 
+		0.5f,  0.5f,  0.5f, 
+		-0.5f,  0.5f,  0.5f,
+		-0.5f,  0.5f, -0.5f
 	};
 
-	glm::vec3 cubePositions[] = {
-		glm::vec3(0.0f,  0.0f,  0.0f),
-		glm::vec3(2.0f,  5.0f, -15.0f),
-		glm::vec3(-1.5f, -2.2f, -2.5f),
-		glm::vec3(-3.8f, -2.0f, -12.3f),
-		glm::vec3(2.4f, -0.4f, -3.5f),
-		glm::vec3(-1.7f,  3.0f, -7.5f),
-		glm::vec3(1.3f, -2.0f, -2.5f),
-		glm::vec3(1.5f,  2.0f, -2.5f),
-		glm::vec3(1.5f,  0.2f, -1.5f),
-		glm::vec3(-1.3f,  1.0f, -1.5f)
-	};
+	GLuint cubeVao;
+	GlCall(glGenVertexArrays(1, &cubeVao));
+	GlCall(glBindVertexArray(cubeVao));
 
-	//unsigned int indices[] = {
-	//	0, 1, 3,
-	//	1, 2, 3
-	//};
-
-	GLuint vao = 0;
-	GlCall(glGenVertexArrays(1, &vao));
-	GlCall(glBindVertexArray(vao));
-
-	// vertex info
-	unsigned int buffer;
-	GlCall(glGenBuffers(1, &buffer));
-	GlCall(glBindBuffer(GL_ARRAY_BUFFER, buffer));
-	GlCall(glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW));
-
-	// vertex indices
-	//unsigned int ibo;
-	//GlCall(glGenBuffers(1, &ibo));
-	//GlCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo));
-	//GlCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW));
+	// vertex info (vbo)
+	VertexBuffer vertexBuffer(vertices, sizeof(vertices));
 
 	// positions
-	GlCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), 0));
+	GlCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0));
 	GlCall(glEnableVertexAttribArray(0));
 
-	// colors
-	//GlCall(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float))));
-	//GlCall(glEnableVertexAttribArray(1));
+	// lamp
+	GLuint lightVao;
+	GlCall(glGenVertexArrays(1, &lightVao));
+	GlCall(glBindVertexArray(lightVao));
 
-	// texture coords
-	GlCall(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float))));
-	GlCall(glEnableVertexAttribArray(1));
+	vertexBuffer.bind();
 
-	// texture
-	Texture2D texture1("res/images/wall.jpg", false, GL_TEXTURE0);
-	Texture2D texture2("res/images/awesomeface.png", true, GL_TEXTURE1);
+	GlCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0));
+	GlCall(glEnableVertexAttribArray(0));
 
-	Shader shader("res/shaders/vertex.glsl", "res/shaders/fragment.glsl");
-	shader.use();
-	shader.setInt("texture1", 0);
-	shader.setInt("texture2", 1);
+	Shader cubeShader("res/shaders/colors.vs", "res/shaders/colors.fs");
+	Shader lampShader("res/shaders/lamp.vs", "res/shaders/lamp.fs");
+
+	glm::vec3 lightPosition(1.2f, 1.0f, 2.0f);
 
 	float deltaTime = 0.0f;
 	float lastFrame = 0.0f;
@@ -239,35 +212,57 @@ int main(int argc, char ** argv)
 
 	while (!glfwWindowShouldClose(window))
 	{
-		float currentFrame = glfwGetTime();
+		float currentFrame = (float)glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 
-		GlCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+		// Input
+		// -----
 		processInput(window, deltaTime);
-		shader.use();
 
-		glm::mat4 projection = glm::perspective(glm::radians(camera.getFov()), ((float)WINDOW_WIDTH) / WINDOW_HEIGHT, 0.1f, 100.0f);
-		shader.setMat4("projection", projection);
+		// Render
+		// ------
+		GlCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+
+		cubeShader.use();
+		cubeShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
+		cubeShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
 		
+		// View/projection transformations
+		glm::mat4 projection = glm::perspective(glm::radians(camera.getFov()), ((float)WINDOW_WIDTH) / WINDOW_HEIGHT, 0.1f, 100.0f);
 		glm::mat4 view = camera.getViewMatrix();
-		shader.setMat4("view", view);
+		cubeShader.setMat4("projection", projection);
+		cubeShader.setMat4("view", view);
+		
+		// World transformation
+		glm::mat4 model(1.0f);
+		cubeShader.setMat4("model", model);
 
-		for (int i = 0; i < 10; ++i)
-		{
-			glm::mat4 model = glm::mat4(1.0f);
-			model = glm::translate(model, cubePositions[i]);
-			model = glm::rotate(model, (float)glfwGetTime() * glm::radians((i + 1) * 7.5f), glm::vec3(0.5f, 1.0f, 0.0f));
-			shader.setMat4("model", model);
-			GlCall(glDrawArrays(GL_TRIANGLES, 0, 36));
-		}
+		// Render the cube
+		GlCall(glBindVertexArray(cubeVao));
+		GlCall(glDrawArrays(GL_TRIANGLES, 0, 36));
 
-		//GlCall(glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, nullptr));
+		// Now the lamp object
+		lampShader.use();
+		lampShader.setVec3("objectColor", 1.0f, 1.0f, 1.0f);
+		lampShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
+		lampShader.setMat4("projection", projection);
+		lampShader.setMat4("view", view);
+
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, lightPosition);
+		model = glm::scale(model, glm::vec3(0.2f));
+		lampShader.setMat4("model", model);
+
+		GlCall(glBindVertexArray(lightVao));
+		GlCall(glDrawArrays(GL_TRIANGLES, 0, 36));
 
 		// swaps front and back buffers
 		glfwSwapBuffers(window);
-
 		glfwPollEvents();
+
+		// FPS
+		// ---
 		second += deltaTime;
 		frames++;
 
@@ -280,7 +275,8 @@ int main(int argc, char ** argv)
 		}
 	}
 
-	GlCall(glDeleteProgram(shader.ProgramId));
+	GlCall(glDeleteVertexArrays(1, &cubeVao));
+	GlCall(glDeleteVertexArrays(1, &lightVao));
 
 	glfwTerminate();
 
