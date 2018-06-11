@@ -89,6 +89,11 @@ float Camera::getFov() const
 	return m_Fov;
 }
 
+const glm::vec3& Camera::getPosition() const
+{
+	return m_Position;
+}
+
 glm::mat4 Camera::getViewMatrix() const
 {
 	return glm::lookAt(m_Position, m_Position + m_Front, m_Up);
