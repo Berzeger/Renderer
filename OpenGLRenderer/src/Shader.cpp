@@ -96,7 +96,7 @@ void Shader::cacheUniformLocations() const
 
 	GLint read, size;
 	GLenum type;
-	const GLsizei bufSize = 16; // maximum name length
+	const GLsizei bufSize = 32; // maximum name length
 	GLchar name[bufSize]; // variable name in GLSL
 
 	for (GLint i = 0; i < nUniforms; ++i)

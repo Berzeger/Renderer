@@ -230,10 +230,27 @@ int main(int argc, char ** argv)
 		GlCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
 		cubeShader.use();
-		cubeShader.setVec3("objectColor", 1.0f, 0.5f, 0.21f);
-		cubeShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
-		cubeShader.setVec3("lightPosition", lightPosition);
 		cubeShader.setVec3("camPos", camera.getPosition());
+
+		cubeShader.setVec3("material.ambient", 1.0f, 0.5f, 0.31f);
+		cubeShader.setVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
+		cubeShader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
+		cubeShader.setFloat("material.shininess", 32.0f);
+
+		cubeShader.setVec3("light.position", lightPosition);
+		cubeShader.setVec3("light.ambient", 0.2f, 0.2f, 0.2f);
+		cubeShader.setVec3("light.diffuse", 0.5f, 0.5f, 0.5f); // darken the light a bit to fit the scene
+		cubeShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
+
+		//cubeShader.setVec3("material.ambient", 0.329412f, 0.223529f, 0.027451f);
+		//cubeShader.setVec3("material.diffuse", 0.780392f, 0.568627f, 0.113725f);
+		//cubeShader.setVec3("material.specular", 0.992157f, 0.941176f, 0.807843f);
+		//cubeShader.setFloat("material.shininess", 27.8974f);
+
+		//cubeShader.setVec3("light.position", lightPosition);
+		//cubeShader.setVec3("light.ambient", 0.2f, 0.2f, 0.2f);
+		//cubeShader.setVec3("light.diffuse", 0.5f, 0.5f, 0.5f); // darken the light a bit to fit the scene
+		//cubeShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
 		
 		// View/projection transformations
 		glm::mat4 projection = glm::perspective(glm::radians(camera.getFov()), ((float)WINDOW_WIDTH) / WINDOW_HEIGHT, 0.1f, 100.0f);
@@ -244,6 +261,7 @@ int main(int argc, char ** argv)
 		// World transformation
 		glm::mat4 model(1.0f);
 		cubeShader.setMat4("model", model);
+		cubeShader.setMat4("transInvModel", glm::transpose(glm::inverse(model)));
 
 		// Render the cube
 		GlCall(glBindVertexArray(cubeVao));
