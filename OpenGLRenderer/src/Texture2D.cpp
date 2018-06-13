@@ -6,14 +6,14 @@
 
 // todo: texture number (GL_TEXTUREx)
 Texture2D::Texture2D(const char* filepath, bool shouldFlip, GLenum textureNumber)
+	: m_TextureNumber(textureNumber)
 {
 	int width, height, nChannels;
 	stbi_set_flip_vertically_on_load(shouldFlip);
 	unsigned char* data = stbi_load(filepath, &width, &height, &nChannels, STBI_rgb);
 
 	GlCall(glGenTextures(1, &Id));
-	GlCall(glActiveTexture(textureNumber));
-	GlCall(glBindTexture(GL_TEXTURE_2D, Id));
+	this->setActive();
 
 	GlCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
 	GlCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
@@ -30,4 +30,10 @@ Texture2D::Texture2D(const char* filepath, bool shouldFlip, GLenum textureNumber
 	{
 		std::cout << "Could not load image " << filepath << "." << std::endl;
 	}
+}
+
+void Texture2D::setActive() const
+{
+	GlCall(glActiveTexture(m_TextureNumber));
+	GlCall(glBindTexture(GL_TEXTURE_2D, Id));
 }
