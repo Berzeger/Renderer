@@ -135,3 +135,13 @@ void Shader::setVec3(const std::string &name, float x, float y, float z) const
 {
 	GlCall(glUniform3f((*m_UniformLocations)[name], x, y, z));
 }
+
+void Shader::setVec4(const std::string &name, const glm::vec4& value) const
+{
+	GlCall(glUniform4fv((*m_UniformLocations)[name], 1, &value[0]));
+}
+
+void Shader::setVec4(const std::string &name, float x, float y, float z, float w) const
+{
+	GlCall(glUniform4f((*m_UniformLocations)[name], x, y, z, w));
+}

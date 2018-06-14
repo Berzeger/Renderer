@@ -24,7 +24,7 @@
 #include "IndexBuffer.h"
 
 extern "C" {
-	_declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
+//	_declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
 }
 
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
@@ -212,10 +212,12 @@ int main(int argc, char ** argv)
 	Shader cubeShader("res/shaders/lighting_map.vs", "res/shaders/lighting_map.fs");
 	Shader lampShader("res/shaders/lamp.vs", "res/shaders/lamp.fs");
 
-	Texture2D cubeTexture("res/images/container2.png", false, GL_TEXTURE0);
+	Texture2D cubeTexture("res/images/container2_specular.png", false, GL_TEXTURE0);
 	Texture2D cubeSpecularTexture("res/images/container2_specular.png", false, GL_TEXTURE1);
+	Texture2D cubeEmissiveTexture("res/images/matrix_borders.jpg", false, GL_TEXTURE2);
 
-	glm::vec3 lightPosition(1.2f, 1.0f, 2.0f);
+	glm::vec4 lightPosition(1.2f, 1.0f, 2.0f, 1.0f);
+	glm::vec4 lightDirection(-0.2f, -1.0f, -0.3f, 0.0f);
 
 	float deltaTime = 0.0f;
 	float lastFrame = 0.0f;
@@ -239,18 +241,21 @@ int main(int argc, char ** argv)
 
 		cubeShader.use();
 
-		cubeShader.setVec3("camPos", camera.getPosition());
+		cubeShader.setVec4("camPos", glm::vec4(camera.getPosition(), 1.0f));
+		cubeShader.setFloat("time", glfwGetTime());
 
 		cubeTexture.setActive();
 		cubeShader.setInt("material.diffuse", 0);
 		cubeSpecularTexture.setActive();
 		cubeShader.setInt("material.specular", 1);
+		cubeEmissiveTexture.setActive();
+		cubeShader.setInt("material.emissive", 2);
 		cubeShader.setFloat("material.shininess", 32.0f);
 
-		cubeShader.setVec3("light.position", lightPosition);
-		cubeShader.setVec3("light.ambient", 0.2f, 0.2f, 0.2f);
-		cubeShader.setVec3("light.diffuse", 0.5f, 0.5f, 0.5f); // darken the light a bit to fit the scene
-		cubeShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
+		cubeShader.setVec4("light.vector", lightDirection);
+		cubeShader.setVec4("light.ambient", 0.2f, 0.2f, 0.2f, 0.0f);
+		cubeShader.setVec4("light.diffuse", 0.5f, 0.5f, 0.5f, 0.0f); // darken the light a bit to fit the scene
+		cubeShader.setVec4("light.specular", 1.0f, 1.0f, 1.0f, 0.0f);
 
 		//cubeShader.setVec3("material.ambient", 0.329412f, 0.223529f, 0.027451f);
 		//cubeShader.setVec3("material.diffuse", 0.780392f, 0.568627f, 0.113725f);
@@ -284,7 +289,7 @@ int main(int argc, char ** argv)
 		lampShader.setMat4("view", view);
 
 		model = glm::mat4(1.0f);
-		model = glm::translate(model, lightPosition);
+		model = glm::translate(model, glm::vec3(lightPosition));
 		model = glm::scale(model, glm::vec3(0.2f));
 		lampShader.setMat4("model", model);
 
