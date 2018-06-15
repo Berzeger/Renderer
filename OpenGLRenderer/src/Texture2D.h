@@ -6,11 +6,11 @@
 class Texture2D
 {
 private:
-	GLenum m_TextureNumber;
+	int m_TextureNumber;
 
 public:
 	unsigned int Id;
 
-	Texture2D(const char* filepath, bool shouldFlipVertically, GLenum textureNumber);
+	Texture2D(const char* filepath, bool shouldFlipVertically, int textureNumber);
 	void setActive() const;
 };
