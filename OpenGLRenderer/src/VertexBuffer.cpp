@@ -1,7 +1,7 @@
 #include "VertexBuffer.h"
 #include "macros.h"
-#include <GL\glew.h>
-#include <GLFW\glfw3.h>
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
 
 VertexBuffer::VertexBuffer(const void* data, unsigned int size)
 {

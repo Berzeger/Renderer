@@ -1,7 +1,7 @@
 #include "IndexBuffer.h"
 #include "macros.h"
-#include <GL\glew.h>
-#include <GLFW\glfw3.h>
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
 
 IndexBuffer::IndexBuffer(const void* data, unsigned int size)
 {
