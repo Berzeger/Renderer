@@ -1,12 +1,16 @@
 #pragma once
 
 #include <GLM/glm.hpp>
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
 #include <memory>
 #include <vector>
 
+#include "Macros.h"
 #include "Shader.h"
 #include "Texture2D.h"
 #include "VertexBuffer.h"
+#include "IndexBuffer.h"
 
 struct Vertex
 {
@@ -24,6 +28,8 @@ private:
 	std::vector<unsigned int> m_Indices;
 	std::vector<Texture2DPtr> m_Textures;
 	VertexBuffer* m_VBO;
+	IndexBuffer* m_IBO;
+	unsigned int m_VAO;
 	void setupMesh();
 
 public:
