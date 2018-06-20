@@ -24,6 +24,7 @@ private:
 	std::string parseShader(const std::string& filepath, GLenum type) const;
 	unsigned int createShader(const std::string& vertexShader, const std::string& fragmentShader);
 	void cacheUniformLocations() const;
+	GLint tryGetUniformLocation(const std::string& name) const;
 
 public:
 	unsigned int ProgramId;

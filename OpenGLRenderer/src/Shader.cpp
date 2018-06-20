@@ -106,42 +106,54 @@ void Shader::cacheUniformLocations() const
 	}
 }
 
+GLint Shader::tryGetUniformLocation(const std::string & name) const
+{
+	std::unordered_map<std::string, GLint>::const_iterator iter = m_UniformLocations->find(name);
+
+	if (iter != m_UniformLocations->end())
+	{
+		return iter->second;
+	}
+
+	return -1;
+}
+
 void Shader::setBool(const std::string & name, bool value) const
 {
-	GlCall(glUniform1i((*m_UniformLocations)[name], (int)value));
+	GlCall(glUniform1i(tryGetUniformLocation(name), (int)value));
 }
 
 void Shader::setInt(const std::string & name, int value) const
 {
-	GlCall(glUniform1i((*m_UniformLocations)[name], value));
+	GlCall(glUniform1i(tryGetUniformLocation(name), value));
 }
 
 void Shader::setFloat(const std::string & name, float value) const
 {
-	GlCall(glUniform1f((*m_UniformLocations)[name], value));
+	GlCall(glUniform1f(tryGetUniformLocation(name), value));
 }
 
 void Shader::setMat4(const std::string & name, const glm::mat4& value) const
 {
-	GlCall(glUniformMatrix4fv((*m_UniformLocations)[name], 1, GL_FALSE, glm::value_ptr(value)));
+	GlCall(glUniformMatrix4fv(tryGetUniformLocation(name), 1, GL_FALSE, glm::value_ptr(value)));
 }
 
 void Shader::setVec3(const std::string &name, const glm::vec3& value) const
 {
-	GlCall(glUniform3fv((*m_UniformLocations)[name], 1, &value[0]));
+	GlCall(glUniform3fv(tryGetUniformLocation(name), 1, &value[0]));
 }
 
 void Shader::setVec3(const std::string &name, float x, float y, float z) const
 {
-	GlCall(glUniform3f((*m_UniformLocations)[name], x, y, z));
+	GlCall(glUniform3f(tryGetUniformLocation(name), x, y, z));
 }
 
 void Shader::setVec4(const std::string &name, const glm::vec4& value) const
 {
-	GlCall(glUniform4fv((*m_UniformLocations)[name], 1, &value[0]));
+	GlCall(glUniform4fv(tryGetUniformLocation(name), 1, &value[0]));
 }
 
 void Shader::setVec4(const std::string &name, float x, float y, float z, float w) const
 {
-	GlCall(glUniform4f((*m_UniformLocations)[name], x, y, z, w));
+	GlCall(glUniform4f(tryGetUniformLocation(name), x, y, z, w));
 }
