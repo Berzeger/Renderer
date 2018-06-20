@@ -8,6 +8,7 @@
 #include <GLM/glm.hpp>
 #include <GLM/gtc/matrix_transform.hpp>
 #include <GLM/gtc/type_ptr.hpp>
+#include <assimp/Importer.hpp>
 
 #include <iostream>
 #include <fstream>
@@ -218,6 +219,8 @@ int main(int argc, char ** argv)
 
 	glm::vec4 lightPosition(1.2f, 1.0f, 2.0f, 1.0f);
 	glm::vec4 lightDirection(-0.2f, -1.0f, -0.3f, 0.0f);
+
+	Assimp::Importer importer;
 
 	float deltaTime = 0.0f;
 	float lastFrame = 0.0f;
