@@ -18,6 +18,8 @@ private:
 	std::vector<MeshPtr> m_Meshes;
 	std::string m_Directory;
 
+	void processNode(const aiNode* node, const aiScene* scene) const;
+	MeshPtr processMesh(const aiMesh* mesh, const aiScene* scene) const;
 	void loadModel(const std::string& path);
 public:
 	Model(const std::string& path);
