@@ -212,9 +212,9 @@ int main(int argc, char ** argv)
 	Shader cubeShader("res/shaders/lighting_map.vs", "res/shaders/lighting_map.fs");
 	Shader lampShader("res/shaders/lamp.vs", "res/shaders/lamp.fs");
 
-	Texture2D cubeTexture("res/images/container2_specular.png", false, 0);
-	Texture2D cubeSpecularTexture("res/images/container2_specular.png", false, 1);
-	Texture2D cubeEmissiveTexture("res/images/matrix_borders.jpg", false, 2);
+	Texture2D cubeTexture("res/images/container2_specular.png", false, 0, OTHER);
+	Texture2D cubeSpecularTexture("res/images/container2_specular.png", false, 1, SPECULAR);
+	Texture2D cubeEmissiveTexture("res/images/matrix_borders.jpg", false, 2, EMISSIVE);
 
 	glm::vec4 lightPosition(1.2f, 1.0f, 2.0f, 1.0f);
 	glm::vec4 lightDirection(-0.2f, -1.0f, -0.3f, 0.0f);

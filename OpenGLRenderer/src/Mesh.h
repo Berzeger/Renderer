@@ -7,6 +7,8 @@
 #include <vector>
 
 #include "Macros.h"
+#include <string>
+
 #include "Shader.h"
 #include "Texture2D.h"
 #include "VertexBuffer.h"

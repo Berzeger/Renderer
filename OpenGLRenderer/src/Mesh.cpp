@@ -32,6 +32,32 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std:
 
 void Mesh::draw(const Shader & shader) const
 {
+	unsigned int diffuseNr = 1;
+	unsigned int specularNr = 1;
+
+	unsigned int size = m_Textures.size();
+	for (unsigned int i = 0; i < size; ++i)
+	{
+		Texture2D* texture = m_Textures[i].get();
+		texture->setActive();
+
+		switch (texture->getType())
+		{
+		case SPECULAR:
+			shader.setInt("material.specular" + specularNr++, i);
+			break;
+		case DIFFUSE:
+			shader.setInt("material.diffuse" + diffuseNr++, i);
+			break;
+		}
+	}
+
+	GlCall(glActiveTexture(GL_TEXTURE0));
+
+	// Draw mesh
+	GlCall(glBindVertexArray(m_VAO));
+	GlCall(glDrawElements(GL_TRIANGLES, m_Indices.size(), GL_UNSIGNED_INT, 0));
+	GlCall(glBindVertexArray(0));
 }
 
 const std::vector<Vertex>& Mesh::getVertices() const

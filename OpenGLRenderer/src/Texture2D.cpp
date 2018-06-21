@@ -5,8 +5,9 @@
 #include <iostream>
 
 // todo: texture number (GL_TEXTUREx)
-Texture2D::Texture2D(const char* filepath, bool shouldFlip, int textureNumber)
-	: m_TextureNumber(textureNumber)
+Texture2D::Texture2D(const char* filepath, bool shouldFlip, int textureNumber, TextureType type)
+	: m_TextureNumber(textureNumber),
+	m_TextureType(type)
 {
 	int width, height, nChannels;
 	stbi_set_flip_vertically_on_load(shouldFlip);
@@ -36,4 +37,9 @@ void Texture2D::setActive() const
 {
 	GlCall(glActiveTexture(GL_TEXTURE0 + m_TextureNumber));
 	GlCall(glBindTexture(GL_TEXTURE_2D, Id));
+}
+
+TextureType Texture2D::getType() const
+{
+	return m_TextureType;
 }
