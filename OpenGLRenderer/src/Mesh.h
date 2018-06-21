@@ -21,8 +21,6 @@ struct Vertex
 	glm::vec2 TexCoords;
 };
 
-typedef std::unique_ptr<Texture2D> Texture2DPtr;
-
 class Mesh
 {
 private:
@@ -41,3 +39,5 @@ public:
 	const std::vector<unsigned int>& getIndices() const;
 	const std::vector<Texture2DPtr>& getTextures() const;
 };
+
+typedef std::unique_ptr<Mesh> MeshPtr;

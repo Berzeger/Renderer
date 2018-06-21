@@ -25,8 +25,8 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std:
 	m_Indices(std::move(indices)),
 	m_Textures(std::move(textures))
 {
-	m_VBO = new VertexBuffer(&m_Vertices[0], m_Vertices.size() * sizeof(Vertex));
-	m_IBO = new IndexBuffer(&m_Indices[0], m_Indices.size() * sizeof(unsigned int));
+	m_VBO = new VertexBuffer(m_Vertices.data(), m_Vertices.size() * sizeof(Vertex));
+	m_IBO = new IndexBuffer(m_Indices.data(), m_Indices.size() * sizeof(unsigned int));
 	setupMesh();
 }
 
@@ -39,25 +39,31 @@ void Mesh::draw(const Shader & shader) const
 	for (unsigned int i = 0; i < size; ++i)
 	{
 		Texture2D* texture = m_Textures[i].get();
-		texture->setActive();
+		texture->setTextureNumber(i);
 
 		switch (texture->getType())
 		{
 		case SPECULAR:
-			shader.setInt("material.specular" + specularNr++, i);
+			shader.setInt("texture_specular" + std::to_string(specularNr++), i);
 			break;
 		case DIFFUSE:
-			shader.setInt("material.diffuse" + diffuseNr++, i);
+			shader.setInt("texture_diffuse" + std::to_string(diffuseNr++), i);
 			break;
 		}
+
+		texture->setActive();
 	}
 
-	GlCall(glActiveTexture(GL_TEXTURE0));
-
 	// Draw mesh
+	m_VBO->bind();
+	m_IBO->bind();
 	GlCall(glBindVertexArray(m_VAO));
 	GlCall(glDrawElements(GL_TRIANGLES, m_Indices.size(), GL_UNSIGNED_INT, 0));
 	GlCall(glBindVertexArray(0));
+	m_VBO->unbind();
+	m_IBO->unbind();
+
+	GlCall(glActiveTexture(GL_TEXTURE0));
 }
 
 const std::vector<Vertex>& Mesh::getVertices() const

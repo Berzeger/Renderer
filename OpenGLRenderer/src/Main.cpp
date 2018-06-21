@@ -22,6 +22,7 @@
 #include "Camera.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
+#include "Model.h"
 
 extern "C" {
 //	_declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
@@ -211,6 +212,7 @@ int main(int argc, char ** argv)
 
 	Shader cubeShader("res/shaders/lighting_map.vs", "res/shaders/lighting_map.fs");
 	Shader lampShader("res/shaders/lamp.vs", "res/shaders/lamp.fs");
+	Shader modelShader("res/shaders/model_loading.vs", "res/shaders/model_loading.fs");
 
 	Texture2D cubeTexture("res/images/container2_specular.png", false, 0, OTHER);
 	Texture2D cubeSpecularTexture("res/images/container2_specular.png", false, 1, SPECULAR);
@@ -218,6 +220,8 @@ int main(int argc, char ** argv)
 
 	glm::vec4 lightPosition(1.2f, 1.0f, 2.0f, 1.0f);
 	glm::vec4 lightDirection(-0.2f, -1.0f, -0.3f, 0.0f);
+
+	Model nanosuitModel("res/models/nanosuit2/nanosuit.obj");
 
 	float deltaTime = 0.0f;
 	float lastFrame = 0.0f;
@@ -239,62 +243,72 @@ int main(int argc, char ** argv)
 		GlCall(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
 		GlCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
-		cubeShader.use();
+		//cubeShader.use();
 
-		cubeShader.setVec4("camPos", glm::vec4(camera.getPosition(), 1.0f));
-		cubeShader.setFloat("time", glfwGetTime());
+		//cubeShader.setVec4("camPos", glm::vec4(camera.getPosition(), 1.0f));
+		//cubeShader.setFloat("time", glfwGetTime());
 
-		cubeTexture.setActive();
-		cubeShader.setInt("material.diffuse", 0);
-		cubeSpecularTexture.setActive();
-		cubeShader.setInt("material.specular", 1);
-		cubeEmissiveTexture.setActive();
-		cubeShader.setInt("material.emissive", 2);
-		cubeShader.setFloat("material.shininess", 32.0f);
+		//cubeTexture.setActive();
+		//cubeShader.setInt("material.diffuse", 0);
+		//cubeSpecularTexture.setActive();
+		//cubeShader.setInt("material.specular", 1);
+		//cubeEmissiveTexture.setActive();
+		//cubeShader.setInt("material.emissive", 2);
+		//cubeShader.setFloat("material.shininess", 32.0f);
 
-		cubeShader.setVec4("light.vector", lightDirection);
-		cubeShader.setVec4("light.ambient", 0.2f, 0.2f, 0.2f, 0.0f);
-		cubeShader.setVec4("light.diffuse", 0.5f, 0.5f, 0.5f, 0.0f); // darken the light a bit to fit the scene
-		cubeShader.setVec4("light.specular", 1.0f, 1.0f, 1.0f, 0.0f);
+		//cubeShader.setVec4("light.vector", lightDirection);
+		//cubeShader.setVec4("light.ambient", 0.2f, 0.2f, 0.2f, 0.0f);
+		//cubeShader.setVec4("light.diffuse", 0.5f, 0.5f, 0.5f, 0.0f); // darken the light a bit to fit the scene
+		//cubeShader.setVec4("light.specular", 1.0f, 1.0f, 1.0f, 0.0f);
 
-		//cubeShader.setVec3("material.ambient", 0.329412f, 0.223529f, 0.027451f);
-		//cubeShader.setVec3("material.diffuse", 0.780392f, 0.568627f, 0.113725f);
-		//cubeShader.setVec3("material.specular", 0.992157f, 0.941176f, 0.807843f);
-		//cubeShader.setFloat("material.shininess", 27.8974f);
+		////cubeShader.setVec3("material.ambient", 0.329412f, 0.223529f, 0.027451f);
+		////cubeShader.setVec3("material.diffuse", 0.780392f, 0.568627f, 0.113725f);
+		////cubeShader.setVec3("material.specular", 0.992157f, 0.941176f, 0.807843f);
+		////cubeShader.setFloat("material.shininess", 27.8974f);
 
-		//cubeShader.setVec3("light.position", lightPosition);
-		//cubeShader.setVec3("light.ambient", 0.2f, 0.2f, 0.2f);
-		//cubeShader.setVec3("light.diffuse", 0.5f, 0.5f, 0.5f); // darken the light a bit to fit the scene
-		//cubeShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
-		
-		// View/projection transformations
+		////cubeShader.setVec3("light.position", lightPosition);
+		////cubeShader.setVec3("light.ambient", 0.2f, 0.2f, 0.2f);
+		////cubeShader.setVec3("light.diffuse", 0.5f, 0.5f, 0.5f); // darken the light a bit to fit the scene
+		////cubeShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
+		//
+		//// View/projection transformations
+		//glm::mat4 projection = glm::perspective(glm::radians(camera.getFov()), ((float)WINDOW_WIDTH) / WINDOW_HEIGHT, 0.1f, 100.0f);
+		//glm::mat4 view = camera.getViewMatrix();
+		//cubeShader.setMat4("projection", projection);
+		//cubeShader.setMat4("view", view);
+		//
+		//// World transformation
+		//glm::mat4 model(1.0f);
+		//cubeShader.setMat4("model", model);
+		//cubeShader.setMat4("transInvModel", glm::transpose(glm::inverse(model)));
+
+		//// Render the cube
+		//GlCall(glBindVertexArray(cubeVao));
+		//GlCall(glDrawArrays(GL_TRIANGLES, 0, 36));
+
+		//// Now the lamp object
+		//lampShader.use();
+		//lampShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
+		//lampShader.setMat4("projection", projection);
+		//lampShader.setMat4("view", view);
+
+		//model = glm::mat4(1.0f);
+		//model = glm::translate(model, glm::vec3(lightPosition));
+		//model = glm::scale(model, glm::vec3(0.2f));
+		//lampShader.setMat4("model", model);
+
+		//GlCall(glBindVertexArray(lightVao));
+		//GlCall(glDrawArrays(GL_TRIANGLES, 0, 36));
 		glm::mat4 projection = glm::perspective(glm::radians(camera.getFov()), ((float)WINDOW_WIDTH) / WINDOW_HEIGHT, 0.1f, 100.0f);
 		glm::mat4 view = camera.getViewMatrix();
-		cubeShader.setMat4("projection", projection);
-		cubeShader.setMat4("view", view);
-		
-		// World transformation
-		glm::mat4 model(1.0f);
-		cubeShader.setMat4("model", model);
-		cubeShader.setMat4("transInvModel", glm::transpose(glm::inverse(model)));
-
-		// Render the cube
-		GlCall(glBindVertexArray(cubeVao));
-		GlCall(glDrawArrays(GL_TRIANGLES, 0, 36));
-
-		// Now the lamp object
-		lampShader.use();
-		lampShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
-		lampShader.setMat4("projection", projection);
-		lampShader.setMat4("view", view);
-
-		model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(lightPosition));
-		model = glm::scale(model, glm::vec3(0.2f));
-		lampShader.setMat4("model", model);
-
-		GlCall(glBindVertexArray(lightVao));
-		GlCall(glDrawArrays(GL_TRIANGLES, 0, 36));
+		modelShader.use();
+		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(0.0f, -1.75f, 0.0f)); // translate it down so it's at the center of the scene
+		model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));	// it's a bit too big for our scene, so scale it down
+		modelShader.setMat4("model", model);
+		modelShader.setMat4("projection", projection);
+		modelShader.setMat4("view", view);
+		nanosuitModel.draw(modelShader);
 
 		// swaps front and back buffers
 		glfwSwapBuffers(window);
