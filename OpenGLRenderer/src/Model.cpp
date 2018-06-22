@@ -74,8 +74,7 @@ MeshPtr Model::processMesh(const aiMesh * mesh, const aiScene * scene)
 		textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
 	}
 
-	MeshPtr rv(new Mesh(vertices, indices, textures));
-	return rv;
+	return std::make_unique<Mesh>(vertices, indices, textures);
 }
 
 void Model::loadModel(const std::string & path)
@@ -117,8 +116,7 @@ std::vector<Texture2DPtr> Model::loadMaterialTextures(const aiMaterial * mat, ai
 		{
 			std::string filename = std::string(str.C_Str());
 			filename = m_Directory + '/' + filename;
-			Texture2D texture(filename.c_str(), false, i, textureType);
-			Texture2DPtr ptr = std::make_shared<Texture2D>(texture);
+			Texture2DPtr ptr = std::make_shared<Texture2D>(filename.c_str(), false, i, textureType);
 			textures.push_back(ptr);
 			m_LoadedTextures.push_back(ptr);
 		}

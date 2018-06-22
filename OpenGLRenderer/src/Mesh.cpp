@@ -5,8 +5,8 @@ void Mesh::setupMesh()
 	GlCall(glGenVertexArrays(1, &m_VAO));
 	GlCall(glBindVertexArray(m_VAO));
 
-	// IBO needs to be initialized AFTER binding VAO.
-	m_IBO = new IndexBuffer(m_Indices.data(), m_Indices.size() * sizeof(unsigned int));
+	// IBO needs to be binded AFTER binding VAO.
+	m_IBO.bind();
 
 	// vertex positions
 	GlCall(glEnableVertexAttribArray(0));
@@ -26,9 +26,10 @@ void Mesh::setupMesh()
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture2DPtr> textures)
 	: m_Vertices(std::move(vertices)),
 	m_Indices(std::move(indices)),
-	m_Textures(std::move(textures))
+	m_Textures(std::move(textures)),
+	m_VBO(m_Vertices.data(), m_Vertices.size() * sizeof(Vertex)),
+	m_IBO(m_Indices.data(), m_Indices.size() * sizeof(unsigned int))
 {
-	m_VBO = new VertexBuffer(m_Vertices.data(), m_Vertices.size() * sizeof(Vertex));
 	setupMesh();
 }
 

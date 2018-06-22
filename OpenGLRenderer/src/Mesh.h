@@ -27,8 +27,8 @@ private:
 	std::vector<Vertex> m_Vertices;
 	std::vector<unsigned int> m_Indices;
 	std::vector<Texture2DPtr> m_Textures;
-	VertexBuffer* m_VBO;
-	IndexBuffer* m_IBO;
+	VertexBuffer m_VBO;
+	IndexBuffer m_IBO;
 	unsigned int m_VAO;
 	void setupMesh();
 
