@@ -104,7 +104,8 @@ std::vector<Texture2DPtr> Model::loadMaterialTextures(const aiMaterial * mat, ai
 		unsigned int texturesCount = m_LoadedTextures.size();
 		for (unsigned int j = 0; j < texturesCount; ++j)
 		{
-			if (std::strcmp(m_LoadedTextures[j]->getFilepath(), str.C_Str()) == 0)
+			std::string filename = m_Directory + '/' + str.C_Str();
+			if (m_LoadedTextures[j]->getFilepath() == filename)
 			{
 				textures.push_back(m_LoadedTextures[j]);
 				skip = true;
@@ -114,9 +115,8 @@ std::vector<Texture2DPtr> Model::loadMaterialTextures(const aiMaterial * mat, ai
 
 		if (!skip)
 		{
-			std::string filename = std::string(str.C_Str());
-			filename = m_Directory + '/' + filename;
-			Texture2DPtr ptr = std::make_shared<Texture2D>(filename.c_str(), false, i, textureType);
+			std::string filename = m_Directory + '/' + str.C_Str();
+			Texture2DPtr ptr = std::make_shared<Texture2D>(filename, false, i, textureType);
 			textures.push_back(ptr);
 			m_LoadedTextures.push_back(ptr);
 		}
