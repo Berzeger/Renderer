@@ -18,7 +18,15 @@ void Mesh::setupMesh()
 
 	// vertex texture coords
 	GlCall(glEnableVertexAttribArray(2));
-	GlCall(glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords)));
+	GlCall(glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords)));
+
+	// vertex tangents
+	GlCall(glEnableVertexAttribArray(3));
+	GlCall(glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Tangent)));
+
+	// vertex tangents
+	GlCall(glEnableVertexAttribArray(4));
+	GlCall(glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Bitangent)));
 
 	GlCall(glBindVertexArray(0));
 }

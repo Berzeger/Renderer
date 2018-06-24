@@ -31,10 +31,29 @@ MeshPtr Model::processMesh(const aiMesh * mesh, const aiScene * scene)
 		vector.z = mesh->mVertices[i].z;
 		vertex.Position = vector;
 
-		vector.x = mesh->mNormals[i].x;
-		vector.y = mesh->mNormals[i].y;
-		vector.z = mesh->mNormals[i].z;
-		vertex.Normal = vector;
+		if (mesh->mNormals != nullptr)
+		{
+			vector.x = mesh->mNormals[i].x;
+			vector.y = mesh->mNormals[i].y;
+			vector.z = mesh->mNormals[i].z;
+			vertex.Normal = vector;
+		}
+
+		if (mesh->mTangents != nullptr)
+		{
+			vector.x = mesh->mTangents[i].x;
+			vector.y = mesh->mTangents[i].y;
+			vector.z = mesh->mTangents[i].z;
+			vertex.Tangent = vector;
+		}
+
+		if (mesh->mBitangents != nullptr)
+		{
+			vector.x = mesh->mBitangents[i].x;
+			vector.y = mesh->mBitangents[i].y;
+			vector.z = mesh->mBitangents[i].z;
+			vertex.Bitangent = vector;
+		}
 
 		// Does the mesh contain texture coordinates?
 		if (mesh->mTextureCoords[0])
@@ -72,6 +91,12 @@ MeshPtr Model::processMesh(const aiMesh * mesh, const aiScene * scene)
 
 		std::vector<Texture2DPtr> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, SPECULAR);
 		textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+
+		std::vector<Texture2DPtr> heightMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, HEIGHT);
+		textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
+
+		std::vector<Texture2DPtr> ambientMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, AMBIENT);
+		textures.insert(textures.end(), ambientMaps.begin(), ambientMaps.end());
 	}
 
 	return std::make_unique<Mesh>(vertices, indices, textures);

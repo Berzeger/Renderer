@@ -10,6 +10,8 @@ enum TextureType
 	DIFFUSE,
 	SPECULAR,
 	EMISSIVE,
+	HEIGHT,
+	AMBIENT,
 	OTHER
 };
 
