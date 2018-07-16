@@ -30,6 +30,9 @@ Texture2D::Texture2D(const std::string& filepath, bool shouldFlip, int textureNu
 		case 1:
 			format = GL_RED;
 			break;
+		case 2:
+			format = GL_RG;
+			break;
 		case 3:
 			format = GL_RGB;
 			break;
